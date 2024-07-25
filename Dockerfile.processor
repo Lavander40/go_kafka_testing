@@ -1,0 +1,12 @@
+FROM golang:1.21.2
+
+WORKDIR /testing
+
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+COPY . ./
+
+RUN go build -o ./bin/processor/processor.exe -v ./cmd/processor/main.go
+
+CMD [ "./bin/processor/processor.exe"]

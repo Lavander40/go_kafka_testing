@@ -1,0 +1,12 @@
+FROM golang:1.21.2
+
+WORKDIR /testing
+
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+COPY . ./
+
+RUN go build -o ./bin/migrator/migrator.exe -v ./cmd/migrator/main.go
+
+CMD [ "./bin/migrator/migrator.exe"]
