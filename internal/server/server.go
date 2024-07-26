@@ -37,7 +37,8 @@ func (s *Server) Start() error {
 
 // configureRouter sets up the HTTP routes and middleware
 func (s *Server) configureRouter() {
-	s.router.Use(s.middlewareFunc)	
+	s.router.Use(s.middlewareFunc)
+	s.router.HandleFunc("/", s.index)
 	s.router.HandleFunc("/messages", s.getMessagesHandler).Methods("GET")
 	s.router.HandleFunc("/messages", s.createMessageHandler).Methods("POST")
 	s.router.HandleFunc("/messages/stats", s.getStatsHandler).Methods("GET")

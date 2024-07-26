@@ -3,10 +3,17 @@ package server
 import (
 	"encoding/json"
 	"go_kafka_testing/internal/domain"
+	"io"
 	"log/slog"
 	"net/http"
 	"time"
 )
+
+// index hadles default route of api
+func (s *Server) index(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "Welcome to go_testing_kafka api")
+	w.WriteHeader(http.StatusOK)
+}
 
 // getMessagesHandler handles GET requests to retrieve all messages from storage
 func (s *Server) getMessagesHandler(w http.ResponseWriter, r *http.Request) {
