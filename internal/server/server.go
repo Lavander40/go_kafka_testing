@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Server struct
 type Server struct {
 	log     *slog.Logger
 	port    string
@@ -28,11 +29,13 @@ func New(log *slog.Logger, port string, storage *storage.Storage, kafka kafka.Ka
 	}
 }
 
+// Start launches the HTTP server
 func (s *Server) Start() error {
 	s.configureRouter()
 	return http.ListenAndServe(s.port, s.router)
 }
 
+// configureRouter sets up the HTTP routes and middleware
 func (s *Server) configureRouter() {
 	s.router.Use(s.middlewareFunc)	
 	s.router.HandleFunc("/messages", s.getMessagesHandler).Methods("GET")
@@ -40,6 +43,7 @@ func (s *Server) configureRouter() {
 	s.router.HandleFunc("/messages/stats", s.getStatsHandler).Methods("GET")
 }
 
+// middlewareFunc logs request details and measures execution time
 func (s *Server) middlewareFunc(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()

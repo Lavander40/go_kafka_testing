@@ -8,6 +8,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+// SendMessage sends formatted messages of type domain.Messae to kafka topic
 func (k *Kafka) SendMessage(msg *domain.Message) error {
 	messageBytes, err := json.Marshal(msg)
 	if err != nil {
@@ -22,6 +23,7 @@ func (k *Kafka) SendMessage(msg *domain.Message) error {
 	)
 }
 
+// ReadMessage resives oldest unread message from topic
 func (k *Kafka) ReadMessage() (*domain.Message, error) {
 	m, err := k.reader.ReadMessage(k.ctx)
 	if err != nil {

@@ -1,3 +1,4 @@
+// Domain package describes data structures used in different modules of the application
 package domain
 
 import (

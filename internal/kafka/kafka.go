@@ -7,16 +7,19 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+// KafkaWriter interface contains functions to connect to kafka for sending messages to the topic
 type KafkaWriter interface {
 	InitWriter() error
 	SendMessage(*domain.Message) error
 }
 
+// KafkaReader interface contains functions to connect to kafka for receiving messages from the topic
 type KafkaReader interface {
 	InitReader() error
 	ReadMessage() (*domain.Message, error)
 }
 
+// Kafka type stores information about kafka broker and opened connections for writing and reading messages from it.
 type Kafka struct {
 	ctx          context.Context
 	writer       *kafka.Writer
@@ -33,6 +36,7 @@ func New(ctx context.Context, kafkaConnect string, topic string) *Kafka {
 	}
 }
 
+// InitWriter creates connect for sending messages to kafka
 func (k *Kafka) InitWriter() error {
 	writer := &kafka.Writer{
 		Addr:     kafka.TCP(k.kafkaConnect),
@@ -44,6 +48,7 @@ func (k *Kafka) InitWriter() error {
 	return nil
 }
 
+// InitReader creates connect to read messages from kafka
 func (k *Kafka) InitReader() error {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{k.kafkaConnect},
@@ -55,6 +60,7 @@ func (k *Kafka) InitReader() error {
 	return nil
 }
 
+// Close fucn closes all existing connections
 func (k *Kafka) Close() error {
 	if k.writer != nil {
 		if err := k.writer.Close(); err != nil {

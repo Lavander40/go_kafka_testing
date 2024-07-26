@@ -2,11 +2,13 @@ package storage
 
 import "go_kafka_testing/internal/domain"
 
+// SaveMessafe stores provided message to database
 func (s *Storage) SaveMessage(msg *domain.Message) (id int, err error) {
 	err = s.conn.QueryRow("INSERT INTO messages (content, status, created_at) VALUES ($1, 'pending', $2) RETURNING id;", msg.Content, msg.CreatedAt).Scan(&id)
 	return
 }
 
+// GetMessages returns full list of stored messages
 func (s *Storage) GetMessages() ([]*domain.Message, error) {
 	var messages []*domain.Message
 
@@ -28,11 +30,13 @@ func (s *Storage) GetMessages() ([]*domain.Message, error) {
 	return messages, nil
 }
 
+// UpdateStatus applies changes to status of specific message in database 
 func (s *Storage) UpdateStatus(msg *domain.Message) error {
 	_, err := s.conn.Exec("UPDATE messages SET status=$1, processed_at=$2 WHERE id=$3;", msg.Status, msg.ProcessedAt, msg.ID)
 	return err
 }
 
+// GetStats recive information about amount of pending, processed and overall amount for stored messages 
 func (s *Storage) GetStats() (domain.Stats, error) {
 	var stats domain.Stats
 	

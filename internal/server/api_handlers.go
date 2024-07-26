@@ -8,7 +8,9 @@ import (
 	"time"
 )
 
+// getMessagesHandler handles GET requests to retrieve all messages from storage
 func (s *Server) getMessagesHandler(w http.ResponseWriter, r *http.Request) {
+	// getting messages from DB
 	msgs, err := s.storage.GetMessages()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -20,9 +22,11 @@ func (s *Server) getMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(msgs)
 }
 
+// createMessageHandler handles POST requests to create a new message
 func (s *Server) createMessageHandler(w http.ResponseWriter, r *http.Request) {
 	var msg domain.Message
 
+	// Decode the request body into a Message struct
 	err := json.NewDecoder(r.Body).Decode(&msg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -35,6 +39,7 @@ func (s *Server) createMessageHandler(w http.ResponseWriter, r *http.Request) {
 
 	msg.CreatedAt = time.Now()
 
+	// Save the message to the database
 	id, err := s.storage.SaveMessage(&msg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -43,6 +48,7 @@ func (s *Server) createMessageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	msg.ID = id
 
+	// Send the message to Kafka
 	if err = s.kafka.SendMessage(&msg); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		s.log.Error("Error during message sending to kafka:", slog.Any("error", err))
@@ -55,7 +61,9 @@ func (s *Server) createMessageHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(msg)
 }
 
+// getStatsHandler handles GET requests to retrieve message statistics from storage
 func (s *Server) getStatsHandler(w http.ResponseWriter, r *http.Request) {
+	// getting stats from DB
 	stats, err := s.storage.GetStats()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

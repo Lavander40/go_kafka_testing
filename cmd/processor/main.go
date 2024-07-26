@@ -1,3 +1,5 @@
+// Processor recives kafka messages and simulates its processing
+// after simulating working proccess it changes status of processed message in the database
 package main
 
 import (
@@ -38,10 +40,12 @@ func main() {
 	}()
 	
 	messageChan := make(chan *domain.Message)
+	// lauch of reading cycle in different gorutine
 	go readMessages(k, messageChan)
 	processMessages(messageChan, s)
 }
 
+// readMessage is cycle of reading messages from kafka topic
 func readMessages(k kafka.KafkaReader, messageChan chan<- *domain.Message) {
 	for {
 		msg, err := k.ReadMessage()
@@ -53,6 +57,7 @@ func readMessages(k kafka.KafkaReader, messageChan chan<- *domain.Message) {
 	}
 }
 
+// processMessages 'process'es given messages and updates its status in the database
 func processMessages(messageChan <-chan *domain.Message, s *storage.Storage) {
 	for msg := range messageChan {
 		log.Printf("Got message to process: %v", msg)
