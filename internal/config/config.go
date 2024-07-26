@@ -40,9 +40,15 @@ func MustLoad() *Config {
 	}
 	if pHost == "" {
 		pHost = os.Getenv("POSTGRES_HOST")
+		if pHost == "" {
+			pHost = "localhost"
+		}
 	}
 	if kHost == "" {
 		kHost = os.Getenv("KAFKA_HOST")
+		if kHost == "" {
+			kHost = "localhost"
+		}
 	}
 
 	// error on required parameters
