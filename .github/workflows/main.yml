@@ -45,7 +45,7 @@ jobs:
         go-version: 1.21.2
 
     - name: Deploy app
-      run: docker build -f Dockerfile.app -t app . && docker run --env-file .env -p 8090:8090 app
+      run: docker build -f Dockerfile.app -t app . && docker run -p 8090:8090 app
       env:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -53,7 +53,7 @@ jobs:
         KAFKA_HOST: kafka
 
     - name: Deploy processor
-      run: docker build -f Dockerfile.processor -t processor . && docker run --env-file .env processor
+      run: docker build -f Dockerfile.processor -t processor . && docker run processor
       env:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -61,7 +61,7 @@ jobs:
         KAFKA_HOST: kafka
 
     - name: Deploy migrator
-      run: docker build -f Dockerfile.migrator -t migrator . && docker run --env-file .env migrator
+      run: docker build -f Dockerfile.migrator -t migrator . && docker run migrator
       env:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
