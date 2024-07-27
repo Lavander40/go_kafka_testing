@@ -51,6 +51,7 @@ jobs:
         POSTGRES_PASSWORD: pass123
         POSTGRES_HOST: postgres
         KAFKA_HOST: kafka
+        APP_PORT: 8090
         
         
         
