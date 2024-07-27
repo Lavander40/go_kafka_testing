@@ -22,7 +22,7 @@ docker-compose up -d --build
 **Clone the Repository**
 
     git clone https://github.com/Lavander40/go_kafka_testing
-    cd yourproject
+    cd go_kafka_testing
 
 **Install Dependencies**
 
