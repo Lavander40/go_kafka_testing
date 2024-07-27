@@ -21,25 +21,16 @@ docker-compose up -d --build
 
 **Clone the Repository**
 
-    Open your terminal and clone the repository:
-    ```sh
     git clone https://github.com/lavander40/go_kafka_testing
     cd yourproject
-    ```
 
 **Install Dependencies**
 
-    Ensure all dependencies are installed. Go modules should manage this automatically if they are defined in `go.mod`:
-    ```sh
     go mod tidy
-    ```
 
 **Run the Application**
 
-    Use the `go run` command to start the application:
-    ```sh
     go run cmd/main.go
-    ```
 
 # API Documentation
 
