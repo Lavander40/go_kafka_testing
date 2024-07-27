@@ -45,12 +45,12 @@ jobs:
         go-version: 1.21.2
 
     - name: Deploy app
-      run: docker build -f Dockerfile.app -t app . && docker run -ePOSTGRES_USER:admin -e POSTGRES_PASSWORD:pass123 -e POSTGRES_HOST:postgres -e KAFKA_HOST:kafka -p 8090:8090 app
-            
-    - name: Deploy processor
-      run: docker build -f Dockerfile.processor -t processor . && docker run -e POSTGRES_USER:admin -e POSTGRES_PASSWORD:pass123 -e POSTGRES_HOST:postgres -e KAFKA_HOST:kafka processor
+      run: docker-compose up
+      env:
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: pass123
+        POSTGRES_HOST: postgres
+        KAFKA_HOST: kafka
         
-    - name: Deploy migrator
-      run: docker build -f Dockerfile.migrator -t migrator . && docker run -e POSTGRES_USER:admin -e POSTGRES_PASSWORD:pass123 -e POSTGRES_HOST:postgres migrator
         
         
