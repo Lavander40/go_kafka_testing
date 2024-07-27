@@ -23,7 +23,7 @@ docker-compose up -d --build
 
     Open your terminal and clone the repository:
     ```sh
-    git clone https://github.com/yourusername/yourproject.git
+    git clone https://github.com/lavander40/go_kafka_testing
     cd yourproject
     ```
 
