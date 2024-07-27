@@ -1,0 +1,97 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: messages
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      zookeeper:
+        image: bitnami/zookeeper:latest
+        env:
+          ALLOW_ANONYMOUS_LOGIN: 'yes'
+        ports:
+          - 2181:2181
+
+      kafka:
+        image: bitnami/kafka:latest
+        env:
+          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
+        ports:
+          - 9092:9092
+        options: >-
+          --health-cmd kafka-broker-api-versions.sh --bootstrap-server kafka:9092
+          --health-interval 30s
+          --health-timeout 15s
+          --health-retries 7
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.21.2
+
+    - name: Cache Go modules
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/go-build
+          ${{ github.workspace }}/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Build app
+      run: go build -o ./bin/app ./cmd/app/main.go
+
+    - name: Build processor
+      run: go build -o ./bin/processor ./cmd/processor/main.go
+
+    - name: Build migrator
+      run: go build -o ./bin/migrator ./cmd/migrator/main.go
+
+    - name: Deploy app
+      run: docker build -f Dockerfile.app -t app . && docker run --env-file .env -p ${{ secrets.APP_PORT }}:8090 app
+      env:
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_HOST: postgres
+        KAFKA_HOST: kafka
+
+    - name: Deploy processor
+      run: docker build -f Dockerfile.processor -t processor . && docker run --env-file .env processor
+      env:
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_HOST: postgres
+        KAFKA_HOST: kafka
+
+    - name: Deploy migrator
+      run: docker build -f Dockerfile.migrator -t migrator . && docker run --env-file .env migrator
+      env:
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_HOST: postgres
