@@ -1,0 +1,56 @@
+# Define variables
+ENV_FILE = .env
+KAFKA_HOST = $(shell grep KAFKA_HOST $(ENV_FILE) | cut -d '=' -f2)
+POSTGRES_HOST = $(shell grep POSTGRES_HOST $(ENV_FILE) | cut -d '=' -f2)
+POSTGRES_PORT = 5432
+KAFKA_PORT = 9092
+
+# Load environment variables from .env file
+include $(ENV_FILE)
+export $(shell sed 's/=.*//' $(ENV_FILE))
+
+# Default target
+.PHONY: all
+all: check-services app processor migrator
+
+# Check services
+.PHONY: check-services
+check-services: check-postgres check-kafka
+
+.PHONY: check-postgres
+check-postgres:
+	@echo "Checking PostgreSQL service..."
+	@if ! nc -z $(POSTGRES_HOST) $(POSTGRES_PORT); then \
+		echo "Error: PostgreSQL is not running on $(POSTGRES_HOST):$(POSTGRES_PORT)"; \
+		exit 1; \
+	else \
+		echo "PostgreSQL is running on $(POSTGRES_HOST):$(POSTGRES_PORT)"; \
+	fi
+
+.PHONY: check-kafka
+check-kafka:
+	@echo "Checking Kafka service..."
+	@if ! nc -z $(KAFKA_HOST) $(KAFKA_PORT); then \
+		echo "Error: Kafka is not running on $(KAFKA_HOST):$(KAFKA_PORT)"; \
+		exit 1; \
+	else \
+		echo "Kafka is running on $(KAFKA_HOST):$(KAFKA_PORT)"; \
+	fi
+
+# Run app
+.PHONY: app
+app:
+	@echo "Running app..."
+	@go run cmd/app/main.go
+
+# Run processor
+.PHONY: processor
+processor:
+	@echo "Running processor..."
+	@go run cmd/processor/main.go
+
+# Run migrator
+.PHONY: migrator
+migrator:
+	@echo "Running migrator..."
+	@go run cmd/migrator/main.go

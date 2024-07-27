@@ -10,9 +10,36 @@ This project is a Go application that demonstrates integration with Kafka and Po
 - Retrieve statistics of messages.
 
 ## Starting the project
+
+### Run with docker
+
 ```sh
 docker-compose up -d --build
 ```
+
+### Run manualy
+
+**Clone the Repository**
+
+    Open your terminal and clone the repository:
+    ```sh
+    git clone https://github.com/yourusername/yourproject.git
+    cd yourproject
+    ```
+
+**Install Dependencies**
+
+    Ensure all dependencies are installed. Go modules should manage this automatically if they are defined in `go.mod`:
+    ```sh
+    go mod tidy
+    ```
+
+**Run the Application**
+
+    Use the `go run` command to start the application:
+    ```sh
+    go run cmd/main.go
+    ```
 
 # API Documentation
 

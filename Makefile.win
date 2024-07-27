@@ -1,0 +1,38 @@
+# Define variables
+ENV_FILE = .env
+
+# Default target
+.PHONY: all
+all: check-services app processor migrator
+
+# Check services
+.PHONY: check-services
+check-services: check-postgres check-kafka
+
+.PHONY: check-postgres
+check-postgres:
+	@echo "Checking PostgreSQL service..."
+	@where psql >nul 2>&1 || (echo PostgreSQL is not installed. Please install PostgreSQL. && exit 1)
+
+.PHONY: check-kafka
+check-kafka:
+	@echo "Checking Kafka service..."
+	@where kafka-server-start.bat >nul 2>&1 || (echo Kafka is not installed. Please install Kafka. && exit 1)
+
+# Run app
+.PHONY: app
+app:
+	@echo "Running app..."
+	@go run cmd/app/main.go
+
+# Run processor
+.PHONY: processor
+processor:
+	@echo "Running processor..."
+	@go run cmd/processor/main.go
+
+# Run migrator
+.PHONY: migrator
+migrator:
+	@echo "Running migrator..."
+	@go run cmd/migrator/main.go
