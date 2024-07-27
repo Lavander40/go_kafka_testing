@@ -21,7 +21,7 @@ func MustLoad() *Config {
 	var pUser, pPassword, pHost, kHost string
 
 	// reading provided flags
-	flag.StringVar(&c.LogLevel, "log", "debug", "set level for logger")
+	flag.StringVar(&c.LogLevel, "log", "", "set level for logger")
 	flag.StringVar(&pUser, "user", "", "user for postgre")
 	flag.StringVar(&pPassword, "pass", "", "password for postgre")
 	flag.StringVar(&pHost, "phost", "", "host for postgre")
@@ -31,6 +31,9 @@ func MustLoad() *Config {
 	// if flags are empty then read from env variables
 	if c.LogLevel == "" {
 		c.LogLevel = os.Getenv("LOG_LEVEL")
+		if c.LogLevel == "" {
+			c.LogLevel = "debug"
+		}
 	}
 	if pUser == "" {
 		pUser = os.Getenv("POSTGRES_USER")
