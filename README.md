@@ -21,7 +21,7 @@ docker-compose up -d --build
 
 **Clone the Repository**
 
-    git clone https://github.com/Lavander40/go_kafka_testing
+    git clone http://github.com/Lavander40/go_kafka_testing
     cd go_kafka_testing
 
 **Install Dependencies**
@@ -40,11 +40,16 @@ docker-compose up -d --build
 https://lab.aksuma.ru/
 ```
 
-## Requesting with Curl 
+## Requesting with Curl
+### Linux:
 ```sh
-curl -X POST https://lab.aksuma.ru/messages \
+curl -X POST http://lab.aksuma.ru/messages \
      -H 'Content-Type: application/json' \
      -d '{"content": "Hello, world!"}'
+```
+### Windows CMD:
+```sh
+    curl -X POST "http://lab.aksuma.ru/messages" -H "Content-Type: application/json" -d "{\"content\": \"Hello, world!\"}"
 ```
 
 ## Endpoints
