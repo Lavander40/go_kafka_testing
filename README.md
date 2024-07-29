@@ -37,12 +37,12 @@ docker-compose up -d --build
 ## API is avalable on the address
 
 ```url
-http://localhost:8080
+https://lab.aksuma.ru/
 ```
 
 ## Requesting with Curl 
 ```sh
-curl -X POST http://localhost:8080/messages \
+curl -X POST https://lab.aksuma.ru/messages \
      -H 'Content-Type: application/json' \
      -d '{"content": "Hello, world!"}'
 ```
@@ -71,4 +71,4 @@ curl -X POST http://localhost:8080/messages \
 
 **Endpoint:** `GET /messages/stats`
 
-**Description:** Gets statiscit about stored messages.
+**Description:** Gets statistic about stored messages.

@@ -23,7 +23,7 @@ services:
       kafka-init:
         condition: service_completed_successfully
 
-  proseccor:
+  processor:
     container_name: processor
     build:
       context: .
